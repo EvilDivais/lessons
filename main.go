@@ -15,13 +15,6 @@ type User struct {
 	Age     int
 }
 
-// не понимаю строчки с 18 по 22
-type Address struct {
-}
-
-type Addres struct {
-}
-
 func main() {
 	b, err := tb.NewBot(tb.Settings{
 		Token:  "1273930063:AAFiwfWvxMxyBGWFhdFSPOIp4CBx-M633B4",
@@ -43,14 +36,11 @@ func main() {
 			b.Send(m.Sender, fmt.Sprintf("Привет моя доеная корова, %s. Где живет мой Холоп", user.Name))
 			return
 		}
-		user := &User{}
-
 		if user.Address == "" {
 			user.Address = m.Text
 			b.Send(m.Sender, fmt.Sprintf("Надеюсь в, %s. мало оппозиции, а то я придумаю новые налоги. Кстати сколько тебе лет? ", user.Address))
 			return
 		}
-		user = &User{} // тут прям мистика не :=  a =
 
 		if 0 == user.Age {
 			user.Age, _ = strconv.Atoi(m.Text)
