@@ -36,6 +36,7 @@ func main() {
 			b.Send(m.Sender, fmt.Sprintf("Привет моя доеная корова, %s. Где живет мой Холоп", user.Name))
 			return
 		}
+
 		if user.Address == "" {
 			user.Address = m.Text
 			b.Send(m.Sender, fmt.Sprintf("Надеюсь в, %s. мало оппозиции, а то я придумаю новые налоги. Кстати сколько тебе лет? ", user.Address))
