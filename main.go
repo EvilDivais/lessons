@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	tb "gopkg.in/tucnak/telebot.v2"
@@ -14,6 +15,7 @@ type User struct {
 	Age     int
 }
 
+// не понимаю строчки с 18 по 22
 type Address struct {
 }
 
@@ -42,13 +44,20 @@ func main() {
 			return
 		}
 		user := &User{}
-		{
-			if user.Address == "" {
-				user.Address = m.Text
-				b.Send(m.Sender, fmt.Sprintf("Надеюсь в, %s. мало оппозиции, а то я придумаю новые налоги ", user.Address))
-				return
-			}
+
+		if user.Address == "" {
+			user.Address = m.Text
+			b.Send(m.Sender, fmt.Sprintf("Надеюсь в, %s. мало оппозиции, а то я придумаю новые налоги. Кстати сколько тебе лет? ", user.Address))
+			return
 		}
+		user = &User{} // тут прям мистика не :=  a =
+
+		if 0 == user.Age {
+			user.Age, _ = strconv.Atoi(m.Text)
+			b.Send(m.Sender, fmt.Sprintf("Надеюсь ты не собираешься дожить до пенсии гаденышь, %d. это много, раб не должен только жить ", user.Age))
+			return
+		}
+
 	})
 	b.Start()
 
