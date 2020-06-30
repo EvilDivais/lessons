@@ -14,6 +14,12 @@ type User struct {
 	Age     int
 }
 
+type Address struct {
+}
+
+type Addres struct {
+}
+
 func main() {
 	b, err := tb.NewBot(tb.Settings{
 		Token:  "1273930063:AAFiwfWvxMxyBGWFhdFSPOIp4CBx-M633B4",
@@ -35,7 +41,15 @@ func main() {
 			b.Send(m.Sender, fmt.Sprintf("Привет моя доеная корова, %s. Где живет мой Холоп", user.Name))
 			return
 		}
+		user := &User{}
+		{
+			if user.Address == "" {
+				user.Address = m.Text
+				b.Send(m.Sender, fmt.Sprintf("Надеюсь в, %s. мало оппозиции, а то я придумаю новые налоги ", user.Address))
+				return
+			}
+		}
 	})
-
 	b.Start()
+
 }
