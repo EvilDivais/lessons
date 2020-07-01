@@ -15,9 +15,13 @@ type User struct {
 	Age     int
 }
 
+func (u *User) Info() string {
+	return fmt.Sprintf("Name: %s, Address: %s, Age: %d.", u.Name, u.Address, u.Age)
+}
+
 func main() {
 	b, err := tb.NewBot(tb.Settings{
-		Token:  "1273930063:AAFiwfWvxMxyBGWFhdFSPOIp4CBx-M633B4",
+		Token:  "1273930063:AAG_n8nurSdu66Gpua06pbJygdEMp0dEZak",
 		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
 	})
 
@@ -25,12 +29,32 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	users := map[int]*User{}
+	b.Handle("/users", func(m *tb.Message) {
+		admins, _ := b.AdminsOf(m.Chat)
+		isAdmin := false
+		for _, admin := range admins {
+			if admin.User.ID == m.Sender.ID {
+				isAdmin = true
+			}
+		}
+		if !isAdmin {
+			b.Send(m.Sender, "Ты чё сука! Ты не Путин, ТЫ ПЕТУХ")
+			return
+		}
+		for _, user := range users {
 
-	b.Handle("/setuser", func(m *tb.Message) {
+			b.Send(m.Sender, user.Info())
+		}
+	})
+
+	b.Handle("/hello", func(m *tb.Message) {
+		users[m.Sender.ID] = &User{}
 		b.Send(m.Sender, "Привет, Меня зовут Путин я Ваш Бот и врач Лор, Как зовут тебя мой маленьки любитель налогов?!")
 	})
-	user := &User{}
+
 	b.Handle(tb.OnText, func(m *tb.Message) {
+		user := users[m.Sender.ID]
 		if user.Name == "" {
 			user.Name = m.Text
 			b.Send(m.Sender, fmt.Sprintf("Привет моя доеная корова, %s. Где живет мой Холоп", user.Name))
@@ -44,11 +68,16 @@ func main() {
 		}
 
 		if 0 == user.Age {
-			user.Age, _ = strconv.Atoi(m.Text)
+			user.Age, err = strconv.Atoi(m.Text)
+			if err != nil {
+				b.Send(m.Sender, "Ты дебил? Еще раз напишешь строку я вызову ментов и тебе подкинут наркоту!!! Пиши правду УБЛЮДОК")
+				return
+			}
 			b.Send(m.Sender, fmt.Sprintf("Надеюсь ты не собираешься дожить до пенсии гаденышь, %d. это много, раб не должен только жить ", user.Age))
 			return
 		}
 
+		b.Send(m.Sender, fmt.Sprintf("Теперь я о тебе все знаю маленький засранец, Ты %s.Напиши мне кто из твоих друзей за Навального?", user.Info()))
 	})
 	b.Start()
 
