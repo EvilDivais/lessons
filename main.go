@@ -9,6 +9,8 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
+const admin = 129969284
+
 type User struct {
 	Name    string
 	Address string
@@ -31,14 +33,8 @@ func main() {
 	}
 	users := map[int]*User{}
 	b.Handle("/users", func(m *tb.Message) {
-		admins, _ := b.AdminsOf(m.Chat)
-		isAdmin := false
-		for _, admin := range admins {
-			if admin.User.ID == m.Sender.ID {
-				isAdmin = true
-			}
-		}
-		if !isAdmin {
+
+		if !isAdmin(m.Sender.ID) {
 			b.Send(m.Sender, "Ты чё сука! Ты не Путин, ТЫ ПЕТУХ")
 			return
 		}
@@ -81,4 +77,12 @@ func main() {
 	})
 	b.Start()
 
+}
+
+func isAdmin(checkId int) bool {
+	if checkId == admin {
+		return true
+	}
+
+	return false
 }
