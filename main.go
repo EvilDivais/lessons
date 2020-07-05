@@ -31,6 +31,25 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	var (
+		// Universal markup builders.
+		menu = &tb.ReplyMarkup{ResizeReplyKeyboard: true}
+		// Reply buttons.
+		btnHelp     = menu.Text("ℹ Help \n Помощь")
+		btnSettings = menu.Text("⚙ Settings \n Настройки  ")
+	)
+
+	menu.Reply(
+		menu.Row(btnHelp),
+		menu.Row(btnSettings),
+	)
+	// On reply button pressed (message)
+	b.Handle(&btnHelp, func(m *tb.Message) {
+		b.Send(m.Sender, "для общение с Луноликим Господином используй следующие просьбы \n/hello - для начала диалога, \n Если ты сам Император то посмотреть список твоих \"друзей\" /users  ")
+	})
+	b.Handle(&btnSettings, func(m *tb.Message) {
+		b.Send(m.Sender, "для изменений в настройках свяжись с Императором   ")
+	})
 	users := map[int]*User{}
 	b.Handle("/users", func(m *tb.Message) {
 
@@ -51,6 +70,12 @@ func main() {
 
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		user := users[m.Sender.ID]
+		if user == nil {
+			//user = &User{}
+			//users[m.Sender.ID] = user
+			b.Send(m.Sender, "Привет мой маленький любитель экстремизма, для общение с Луноликим Господином используй следующие просьбы \n/hello - для начала диалога, \n  Если ты сам Император то посмотреть список твоих \"друзей\" /users  ")
+			return
+		}
 		if user.Name == "" {
 			user.Name = m.Text
 			b.Send(m.Sender, fmt.Sprintf("Привет моя доеная корова, %s. Где живет мой Холоп", user.Name))
@@ -70,11 +95,12 @@ func main() {
 				return
 			}
 			b.Send(m.Sender, fmt.Sprintf("Надеюсь ты не собираешься дожить до пенсии гаденышь, %d. это много, раб не должен только жить ", user.Age))
+			b.Send(m.Sender, fmt.Sprintf("Теперь я о тебе все знаю маленький засранец, Ты %s.Напиши мне кто из твоих друзей за Навального?", user.Info()), menu)
 			return
 		}
 
-		b.Send(m.Sender, fmt.Sprintf("Теперь я о тебе все знаю маленький засранец, Ты %s.Напиши мне кто из твоих друзей за Навального?", user.Info()))
 	})
+
 	b.Start()
 
 }
