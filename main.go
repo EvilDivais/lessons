@@ -48,7 +48,7 @@ func main() {
 		b.Send(m.Sender, "для общение с Луноликим Господином используй следующие просьбы \n/hello - для начала диалога, \n Если ты сам Император то посмотреть список твоих \"друзей\" /users  ")
 	})
 	b.Handle(&btnSettings, func(m *tb.Message) {
-		b.Send(m.Sender, "для изменений в настройках свяжись с Императором   ")
+		b.Send(m.Sender, "для изменений в настройках свяжись с Императором")
 	})
 	users := map[int]*User{}
 	b.Handle("/users", func(m *tb.Message) {
